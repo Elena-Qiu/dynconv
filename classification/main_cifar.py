@@ -22,6 +22,10 @@ cudnn.benchmark = True
 
 device = 'cuda'
 
+import time
+# import pickle
+
+time_list = []
 def main():
     parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training with sparse masks')
     parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
@@ -205,13 +209,16 @@ def validate(args, val_loader, model, criterion, epoch):
     print('the num step is: ', num_step)
     with torch.no_grad():
         for input, target in tqdm.tqdm(val_loader, total=num_step, ascii=True, mininterval=5):
-            print(len(input))
             input = input.to(device=device, non_blocking=True)
             target = target.to(device=device, non_blocking=True)
 
             # compute output
             meta = {'masks': [], 'device': device, 'gumbel_temp': 1.0, 'gumbel_noise': False, 'epoch': epoch}
+            
+            t1 = time.perf_counter()
             output, meta = model(input, meta)
+            t2 = time.perf_counter()
+            time_list.append((t2-t1) * 1000)
             output = output.float()
 
             # measure accuracy and record loss
@@ -223,7 +230,10 @@ def validate(args, val_loader, model, criterion, epoch):
                 viz.plot_ponder_cost(meta['masks'])
                 viz.plot_masks(meta['masks'])
                 plt.show()
-
+    import pandas as pd
+    df = pd.DataFrame()
+    df['time (ms)'] = time_list
+    df.to_csv("InferenceTime.csv", index=False)
     print(f'* Epoch {epoch} - Prec@1 {top1.avg:.3f}')
     print(f'* average FLOPS (multiply-accumulates, MACs) per image:  {model.compute_average_flops_cost()[0]/1e6:.6f} MMac')
     model.stop_flops_count()
