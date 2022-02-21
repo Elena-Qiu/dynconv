@@ -62,6 +62,7 @@ class ResNet_32x32(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x, meta=None):
+        print('forward here')
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)

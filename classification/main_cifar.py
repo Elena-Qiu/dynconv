@@ -2,6 +2,7 @@ import argparse
 import os.path
 
 import matplotlib.pyplot as plt
+from classification.models.resnet_32x32 import ResNet_32x32
 
 import dynconv
 import torch
@@ -17,7 +18,7 @@ import utils.utils as utils
 import utils.viz as viz
 from torch.backends import cudnn as cudnn
 import models
-
+import pandas as pd
 cudnn.benchmark = True
 
 device = 'cuda'
@@ -193,12 +194,16 @@ def train(args, train_loader, model, criterion, optimizer, epoch):
         optimizer.step()
 
         logger.tick()
+    df = pd.DataFrame()
+    df['time (ms)'] = time_list
+    df.to_csv("InferenceTimeTrain.csv", index=False)
 
 def validate(args, val_loader, model, criterion, epoch):
     """
     Run evaluation
     """
     top1 = utils.AverageMeter()
+    model = ResNet_32x32()
 
     # switch to evaluate mode
     model = flopscounter.add_flops_counting_methods(model)
