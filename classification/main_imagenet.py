@@ -210,7 +210,7 @@ def validate(args, val_loader, model, criterion, epoch):
     num_step = len(val_loader)
     with torch.no_grad():
         for input, target in tqdm.tqdm(val_loader, total=num_step, ascii=True, mininterval=5):  
-            print(len(input()))
+            print(len(input))
             input = input.to(device=device, non_blocking=True)
             target = target.to(device=device, non_blocking=True)
 
