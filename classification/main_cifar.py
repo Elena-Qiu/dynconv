@@ -2,7 +2,7 @@ import argparse
 import os.path
 
 import matplotlib.pyplot as plt
-from classification.models.resnet_32x32 import ResNet_32x32
+from ../classification.models.resnet_32x32 import ResNet_32x32
 
 import dynconv
 import torch
