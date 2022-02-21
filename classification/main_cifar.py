@@ -202,6 +202,7 @@ def validate(args, val_loader, model, criterion, epoch):
     model.reset_flops_count()
 
     num_step = len(val_loader)
+    print('the num step is: ', num_step)
     with torch.no_grad():
         for input, target in tqdm.tqdm(val_loader, total=num_step, ascii=True, mininterval=5):
             print(len(input))
